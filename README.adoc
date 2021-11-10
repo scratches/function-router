@@ -61,6 +61,26 @@ the response is a valid cloud event:
 {"person":{"firstName":"John","lastName":"Doe"},"id":366,"message":"Employee 366 was hired on 10-11-2021"}
 ----
 
+You can fire that employee by sending an event of type "fire":
+
+[source, text]
+----
+curl -w'\n' localhost:8080 \
+ -H "ce-id: 0001" \
+ -H "ce-specversion: 1.0" \
+ -H "ce-type: fire" \
+ -H "ce-source: spring.io/spring-event" \
+ -H "Content-Type: application/json" \
+ -d '{"person":{"firstName":"John","lastName":"Doe"},"id":366}"' -i
+----
+
+responds:
+
+[source, text]
+----
+{"firstName":"John","lastName":"Doe"}
+----
+
 And here is an example of curl command posting a cloud event in structured-mode:
 
 [source, text]

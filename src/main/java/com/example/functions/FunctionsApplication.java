@@ -24,6 +24,14 @@ public class FunctionsApplication {
 		};
 	}
 
+	@Bean
+	public Function<Employee, Person> fire() {
+		return employee -> {
+			Person person = employee.getPerson();
+			return person;
+		};
+	}
+
 }
 
 class Employee {
