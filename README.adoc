@@ -1,0 +1,79 @@
+## Examples of Cloud Events with Spring via HTTP
+
+### Introduction
+The current example uses spring-cloud-function framework as its core which allows users to only worry about functional aspects of 
+their requirement while taking care-off non-functional aspects. For more information on Spring Cloud Function please visit 
+our https://spring.io/projects/spring-cloud-function[project page].
+
+The example consists of a Spring boot configuration class 
+https://github.com/spring-cloud/spring-cloud-function/blob/master/spring-cloud-function-samples/function-sample-cloudevent/src/main/java/io/spring/cloudevent/DemoApplication.java[DemoApplication]
+which contains a sample function which you can interact with following via HTTP.
+
+Given that SCF allows function to be exposed as REST endpoints, you can post cloud event to any of the 
+functions by using function name as path (e.g., `localhost:8080/<function_name>`).
+
+
+Here is an example of curl command posting a cloud event in binary-mode:
+
+[source, text]
+----
+curl -v -w'\n' localhost:8080/hire \
+ -H "ce-id: 0001" \
+ -H "ce-specversion: 1.0" \
+ -H "ce-type: hire" \
+ -H "ce-source: spring.io/spring-event" \
+ -H "Content-Type: application/json" \
+ -d '{"firstName":"John", "lastName":"Doe"}' -i
+----
+
+the response is a valid cloud event:
+
+[source,text]
+----
+> POST / HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.68.0
+> Accept: */*
+> Content-Type: application/json
+> ce-id: 0001
+> ce-specversion: 1.0
+> ce-type: hire
+> ce-source: spring.io/spring-event
+> Content-Length: 38
+> 
+* upload completely sent off: 38 out of 38 bytes
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< user-agent: curl/7.68.0
+< ce-id: ddf6657d-5623-4b01-b33e-0f10aa03b852
+< ce-specversion: 1.0
+< ce-type: com.example.functions.Employee
+< ce-source: http://spring.io/
+< uri: http://localhost:8080/
+< message-type: cloudevent
+< timestamp: 1636536666595
+< Content-Type: application/json
+< Content-Length: 106
+< 
+* Connection #0 to host localhost left intact
+{"person":{"firstName":"John","lastName":"Doe"},"id":366,"message":"Employee 366 was hired on 10-11-2021"}
+----
+
+And here is an example of curl command posting a cloud event in structured-mode:
+
+[source, text]
+----
+curl -w'\n' localhost:8080/asString \
+ -H "Content-Type: application/cloudevents+json" \
+ -d '{
+    "specversion" : "1.0",
+    "type" : "org.springframework",
+    "source" : "https://spring.io/",
+    "id" : "A234-1234-1234",
+    "datacontenttype" : "application/json",
+    "data" : {
+        "firstName" : "John",
+        "lastName" : "Doe"
+    }
+}'
+----
