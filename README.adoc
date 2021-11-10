@@ -10,14 +10,16 @@ https://github.com/spring-cloud/spring-cloud-function/blob/master/spring-cloud-f
 which contains a sample function which you can interact with following via HTTP.
 
 Given that SCF allows function to be exposed as REST endpoints, you can post cloud event to any of the 
-functions by using function name as path (e.g., `localhost:8080/<function_name>`).
+functions by using function name as path (e.g., `localhost:8080/<function_name>`) or by setting
+`spring.cloud.function.definition=<function_name>`. This sample uses the built-in `functionRouter`
+function to dispatch events to the function named after their cloud event type ("ce-type" header).
 
 
 Here is an example of curl command posting a cloud event in binary-mode:
 
 [source, text]
 ----
-curl -v -w'\n' localhost:8080/hire \
+curl -v -w'\n' localhost:8080 \
  -H "ce-id: 0001" \
  -H "ce-specversion: 1.0" \
  -H "ce-type: hire" \
